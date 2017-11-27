@@ -37,6 +37,7 @@ public class Queen extends Agent {
             n = Integer.parseInt((String)args[1]);
         }
         placements = new int[n];
+        resetMat();
 
         registerAtDf();
         while(queens.size() < n - 1){
@@ -45,6 +46,11 @@ public class Queen extends Agent {
 
         // Start behaviour
         addBehaviour(new BoardPlacingBehaviour());
+    }
+
+    private void resetMat(){
+        for(int i = 0; i < n; i++)
+            placements[i] = -1;
     }
 
     public void findQueens() {
@@ -111,6 +117,7 @@ public class Queen extends Agent {
                 addRecipient(message); // Add all queens as recipient
                 send(message);
                 System.out.println(getLocalName() + " Found the placement " + index + "x" + column);
+                printMatrix();
                 placed = true;
             }
 
@@ -132,6 +139,7 @@ public class Queen extends Agent {
                         break;
                     case ACLMessage.REJECT_PROPOSAL:
                         System.out.println(getLocalName() + " successor couldn't find a placement try find a new one");
+                        resetMat();
                         addBehaviour(new findMySpot(false));
                         break;
                 }
@@ -167,6 +175,9 @@ public class Queen extends Agent {
 
             System.out.println(getLocalName() + " Found the placement " + index + "x" + column);
             placements[index] = column;
+            printMatrix();
+            if(index+1 == n)
+                System.out.println("All done");
 
             placed = true;
             ACLMessage message = new ACLMessage(ACLMessage.PROPOSE);
@@ -200,9 +211,14 @@ public class Queen extends Agent {
     private void printMatrix(){
         for(int i = 0; i < n; i++){
             for(int j = 0; j < n; j++){
-
+                if(placements[i] == j)
+                    System.out.print("[" + i + "]");
+                else
+                    System.out.print("[-]");
             }
+            System.out.println();
         }
     }
+
 
 }
