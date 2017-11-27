@@ -114,7 +114,7 @@ public class Queen extends Agent {
                 placed = true;
             }
 
-            ACLMessage msg = blockingReceive(mt);
+            ACLMessage msg = blockingReceive(mt, 5000);
             if(msg != null){
                 String str = msg.getContent();
 
@@ -129,7 +129,6 @@ public class Queen extends Agent {
                             predReply = msg.createReply();
                             addBehaviour(new findMySpot(true));
                         }
-
                         break;
                     case ACLMessage.REJECT_PROPOSAL:
                         System.out.println(getLocalName() + " successor couldn't find a placement try find a new one");
@@ -144,16 +143,17 @@ public class Queen extends Agent {
         public findMySpot(boolean firstTime) {
             if(firstTime)
                 column = 0;
-            else if(index == 0){
+            else
                 column++;
-                if(column >= n)
-                    column = 0;
-            }
+
 
         }
 
         @Override
         public void action() {
+            if(column >= n && index == 0)
+                column = 0;
+
             while(collision(column)){
                 column++;
                 if(column >= n){
@@ -179,6 +179,9 @@ public class Queen extends Agent {
     }
 
     private boolean collision(int column){
+        if(column >= n)
+            return true;
+
         int dRow, dCol;
         for(int i = 0; i < index; i++){
             if(placements[i] == column)
@@ -192,6 +195,14 @@ public class Queen extends Agent {
         }
 
         return false;
+    }
+
+    private void printMatrix(){
+        for(int i = 0; i < n; i++){
+            for(int j = 0; j < n; j++){
+
+            }
+        }
     }
 
 }
