@@ -114,7 +114,7 @@ public class Queen extends Agent {
                 placed = true;
             }
 
-            ACLMessage msg = blockingReceive(mt,5000);
+            ACLMessage msg = blockingReceive(mt);
             if(msg != null){
                 String str = msg.getContent();
 
@@ -144,8 +144,12 @@ public class Queen extends Agent {
         public findMySpot(boolean firstTime) {
             if(firstTime)
                 column = 0;
-            else
+            else if(index == 0){
                 column++;
+                if(column >= n)
+                    column = 0;
+            }
+
         }
 
         @Override
