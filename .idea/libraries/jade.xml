@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="jade">
+    <CLASSES>
+      <root url="jar://D:/Binaries/JADE_HOME/lib/jade.jar!/" />
+      <root url="jar://D:/Binaries/JADE_HOME/lib/commons-codec/commons-codec-1.3.jar!/" />
+      <root url="jar://D:/Binaries/JADE_HOME/lib/jadeExamples.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="file://D:/Binaries/JADE_HOME/src" />
+    </SOURCES>
+  </library>
+</component>
