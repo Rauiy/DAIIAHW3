@@ -12,28 +12,25 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.wrapper.AgentContainer;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
  * Created by Steven on 2017-11-28.
  */
 public class AgentController extends Agent {
-    private jade.wrapper.AgentContainer home;
     private jade.wrapper.AgentContainer[] container = null;
-    private Map<String, Location> locations = new HashMap<String, Location>();
+    private List<Location> locations = new ArrayList<>();
     Runtime runtime = Runtime.instance();
     @Override
     protected void setup(){
         // Register language and ontology
         getContentManager().registerLanguage(new SLCodec());
         getContentManager().registerOntology(MobilityOntology.getInstance());
-
-        home = runtime.createAgentContainer(new ProfileImpl());
-
-        container = new AgentContainer[2];
+        container = new AgentContainer[3];
         jade.wrapper.AgentController a;
-        home = runtime.createAgentContainer(new ProfileImpl());
         try {
 
             for(int i = 0; i < container.length; i++){
@@ -50,10 +47,21 @@ public class AgentController extends Agent {
             ContentElement ce = getContentManager().extractContent(resp);
             Result result = (Result) ce;
             jade.util.leap.Iterator it = result.getItems().iterator();
+
             while (it.hasNext()) {
                 Location loc = (Location)it.next();
-                locations.put(loc.getName(), loc);
+                locations.add(loc);
             }
+
+            Object[] args = new Object[3];
+            args[0] = locations.get(0);
+            args[1] = locations.get(1);
+            args[2] = locations.get(2);
+            a = container[0].createNewAgent("Original", ArtistManager.class.getName(),args);
+            a.start();
+            a.clone(locations.get(1),"clone1");
+            doWait(1000);
+            a.clone(locations.get(1), "clone2");
 
         } catch (Exception e) {
             e.printStackTrace();

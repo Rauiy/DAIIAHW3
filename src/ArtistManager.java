@@ -1,5 +1,6 @@
 import jade.core.AID;
 import jade.core.Agent;
+import jade.core.Location;
 import jade.core.behaviours.Behaviour;
 import jade.core.behaviours.DataStore;
 import jade.core.behaviours.OneShotBehaviour;
@@ -30,15 +31,40 @@ public class ArtistManager extends Agent {
     private final int strategy = 0; // 0 = flat decrease, 1 = incremented decrease, 2 = decremented decrease
     private Random r = new Random();
     private int rounds = 0;
+    private Location[] locations;
     protected void setup(){
         curators = new ArrayList<AID>();
-        registerAtDf();
 
-
-        MessageTemplate mt = MessageTemplate.and(MessageTemplate.MatchPerformative(ACLMessage.INFORM),MessageTemplate.MatchConversationId("JOIN"));
-        addBehaviour(new WaitForCurators(this,mt,System.currentTimeMillis() + 5000, null, null));
+        Object[] args = getArguments();
+        if(args != null){
+            locations = new Location[args.length];
+            for(int i = 0; i < args.length; i++){
+                locations[i] = (Location) args[i];
+            }
+        }
+        //addBehaviour(new WaitForCurators(this,mt,System.currentTimeMillis() + 5000, null, null));
     }
 
+    MessageTemplate mt = MessageTemplate.and(MessageTemplate.MatchPerformative(ACLMessage.INFORM),MessageTemplate.MatchConversationId("JOIN"));
+
+    protected void afterClone(){
+        System.out.println("I am " + getLocalName());
+        if(!getLocalName().equals("Original")){
+           if(getLocalName().equals("clone1")){
+               doMove(locations[1]);
+           }
+           else if(getLocalName().equals("clone2")){
+               doMove(locations[2]);
+           }
+        }
+
+    }
+
+    protected void afterMove(){
+        System.out.println(getLocalName() + ": I moved to " + here());
+        registerAtDf();
+        addBehaviour(new WaitForCurators(this,mt,System.currentTimeMillis()+5000,null,null));
+    }
 
     public void registerAtDf(){
         // Register the tour guide service in the yellow pages
