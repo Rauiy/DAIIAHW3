@@ -46,7 +46,7 @@ public class Queen extends Agent {
             queens.add(getAID());
             addBehaviour(new waitForParticipants(this, mt, System.currentTimeMillis() + 10000, null, null));
             placements = new int[n];
-            resetMat();
+            resetMat(0);
         }
         else {
             while (queens.size() <= 0) {
@@ -59,8 +59,8 @@ public class Queen extends Agent {
         //addBehaviour(new BoardPlacingBehaviour());
     }
 
-    private void resetMat(){
-        for(int i = 0; i < n; i++)
+    private void resetMat(int s){
+        for(int i = s; i < n; i++)
             placements[i] = -1;
     }
 
@@ -175,7 +175,7 @@ public class Queen extends Agent {
             }
             n = queens.size();
             placements = new int[n];
-            resetMat();
+            resetMat(0);
 
             for(int i = 1; i < n; i++){
                 if(queens.get(i).getLocalName().equals(getLocalName()))
@@ -205,7 +205,7 @@ public class Queen extends Agent {
                 addBehaviour(new findMySpot(true));
             }
 
-            ACLMessage msg = blockingReceive(mt, 1000);
+            ACLMessage msg = blockingReceive(mt, 10);
             if(msg != null){
                 String str = msg.getContent();
 
@@ -221,8 +221,8 @@ public class Queen extends Agent {
                             addBehaviour(new findMySpot(true));
                         }
                         else if(index == 0 && row != n-1) {
-                            //System.out.println(index + ": a queen has found a spot");
-                            //printMatrix();
+                           // System.out.println(index + ": a queen has found a spot: " + row + ":" + col);
+                           // printMatrix();
                         }
                         else if (index == 0 && row == n-1){
                             counter++;
@@ -241,7 +241,6 @@ public class Queen extends Agent {
                             System.out.println(index + ": We are done");
                             break;
                         }
-
                         //System.out.println(index + ": successor couldn't find a placement try find a new one");
                         addBehaviour(new findMySpot(false));
                         break;
@@ -256,8 +255,6 @@ public class Queen extends Agent {
                 column = 0;
             else
                 column++;
-
-
         }
 
         @Override
@@ -268,6 +265,8 @@ public class Queen extends Agent {
                     //System.out.println(index + ": Couldn't find a placement");
                     predReply.setPerformative(ACLMessage.REJECT_PROPOSAL);
                     predReply.setOntology("PLACEMENT");
+                    //predReply.addReceiver(queens.get(0));
+                    predReply.setContent(index+"");
                     send(predReply);
                     return;
                 }
