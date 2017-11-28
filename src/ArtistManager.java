@@ -34,6 +34,7 @@ public class ArtistManager extends Agent {
     private Location[] locations;
     protected void setup(){
         curators = new ArrayList<AID>();
+        item = new AuctionItem(r.nextInt(10000) +  10000, r.nextInt(3000)+1000, "MonaLisa" + r.nextInt(10000));
 
         Object[] args = getArguments();
         if(args != null){
@@ -57,10 +58,13 @@ public class ArtistManager extends Agent {
                doMove(locations[2]);
            }
         }
-
     }
 
     protected void afterMove(){
+        if(item.isSold() || item.getLimit()){
+            System.out.println(getLocalName() + ": got back, item status: " + item.toString());
+            return;
+        }
         System.out.println(getLocalName() + ": I moved to " + here());
         registerAtDf();
         addBehaviour(new WaitForCurators(this,mt,System.currentTimeMillis()+5000,null,null));
@@ -110,6 +114,7 @@ public class ArtistManager extends Agent {
     }
 
     private void startAuction(Agent myAgent){
+        doWait(500);
         SequentialBehaviour sb = new SequentialBehaviour();
         sb.addSubBehaviour(new InformOfAuctionStart());
         sb.addSubBehaviour(new AuctionCycles());
@@ -155,8 +160,8 @@ public class ArtistManager extends Agent {
             inform.setOntology("AUCTION");
             inform.setConversationId("START");
             sendMsg(myAgent, inform);
-            item = new AuctionItem(r.nextInt(10000) +  5000, r.nextInt(3000)+1000, "MonaLisa" + r.nextInt(10000));
-            System.out.println("New auction: " + item.toString());
+
+            System.out.println(getLocalName() + ": New auction: " + item.toString());
         }
     }
 
@@ -248,8 +253,6 @@ public class ArtistManager extends Agent {
 
         @Override
         public boolean done() {
-            if(done)
-                startAuction(myAgent);
             return done;
         }
     }

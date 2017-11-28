@@ -14,6 +14,9 @@ import jade.lang.acl.UnreadableException;
 import jade.proto.SimpleAchieveREResponder;
 import jade.proto.states.MsgReceiver;
 
+import java.util.Objects;
+import java.util.Random;
+
 /**
  * Created by Steven on 2017-11-20.
  */
@@ -25,6 +28,8 @@ public class CuratorAgent extends Agent{
     private int strategy = 0; // 0 = increase by flat value, 1 = increase incrementally, 2 = increase decremental
     private double modifier = 500; // 1.2; // 1000
     private double sMod = modifier;
+    private Random r = new Random();
+    private String aName;
     // Template for receiving auction begin
     final MessageTemplate informTemplate = MessageTemplate.and(MessageTemplate.MatchConversationId("START"),
             MessageTemplate.and(MessageTemplate.MatchPerformative(ACLMessage.INFORM),
@@ -34,7 +39,13 @@ public class CuratorAgent extends Agent{
     final MessageTemplate auctionTemplate = MessageTemplate.and(MessageTemplate.MatchConversationId("ITEM"),
             MessageTemplate.MatchOntology("AUCTION"));
     protected void setup() {
+        Object[] args = getArguments();
+        if(args != null && args.length > 0)
+            aName = (String)args[0];
+        init();
+    }
 
+    private void init(){
         if(strategy == 0)
             myBid += 500;
         if(strategy == 2)
@@ -49,7 +60,22 @@ public class CuratorAgent extends Agent{
             artistManager = findAgent(this, "AUCTION");
         }
 
+        addBehaviour(new joinAuction());
+    }
 
+    protected void afterClone(){
+        System.out.println("I am " + getLocalName());
+        //participant clone
+        if(getLocalName().contains("pc1")){
+            strategy = 1;
+            modifier = 1.1;
+            init();
+        }
+        else if(getLocalName().contains("pc2")){
+            strategy = 2;
+            modifier = r.nextInt(1000)+500;
+            init();
+        }
     }
 
     private void startAuctionActions(Agent myAgent){
@@ -81,7 +107,7 @@ public class CuratorAgent extends Agent{
         @Override
         protected void handleMessage(ACLMessage msg) {
             if(msg == null)
-                System.out.println("Never got ready msg");
+                System.out.println(getLocalName() + ": Never got ready msg");
             else {
               //  System.out.println(myAgent.getLocalName() + " is ready for auction!");
                 myBid = sBid;
@@ -148,9 +174,6 @@ public class CuratorAgent extends Agent{
 
         @Override
         public boolean done() {
-            //if(done)
-            //    startAuctionActions(myAgent);
-
             return done;
         }
     }
@@ -177,7 +200,7 @@ public class CuratorAgent extends Agent{
         }
     }
 
-    static public AID findAgent(Agent myAgent, String type) {
+    private AID findAgent(Agent myAgent, String type) {
         AID tmp = null;
         DFAgentDescription template = new DFAgentDescription();
         // to find the right service type imm
@@ -190,8 +213,14 @@ public class CuratorAgent extends Agent{
             // System.out.print("Found the following agents: ");
             // Should only exist one agent of each, so take the first one
             if(result.length > 0){
-                tmp = result[0].getName(); // take the first agent with right service available
-                System.out.println("Found auctioneer: " + tmp.getLocalName());
+               for(DFAgentDescription dfad: result){
+                    if(aName == null || dfad.getName().getLocalName().equals(aName)){
+                        tmp = dfad.getName();
+                        //System.out.println(getLocalName()+ ": Found auctioneer " + tmp.getLocalName());
+                        break;
+                    }
+               }
+
             }
 
         } catch (FIPAException fe) {

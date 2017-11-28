@@ -53,15 +53,37 @@ public class AgentController extends Agent {
                 locations.add(loc);
             }
 
+
+            // Creating the damn auctioneers
             Object[] args = new Object[3];
             args[0] = locations.get(0);
             args[1] = locations.get(1);
             args[2] = locations.get(2);
             a = container[0].createNewAgent("Original", ArtistManager.class.getName(),args);
             a.start();
-            a.clone(locations.get(1),"clone1");
-            doWait(1000);
-            a.clone(locations.get(1), "clone2");
+            a.clone(locations.get(0),"clone1");
+            doWait(500);
+            a.clone(locations.get(0), "clone2");
+            doWait(500);
+
+            args = new Object[]{"clone1"};
+            // Initiate first auction containers participants
+            a = container[1].createNewAgent("participant1",CuratorAgent.class.getName(),args);
+            a.start();
+            doWait(100);
+            a.clone(locations.get(1), "pc11");
+            doWait(100);
+            a.clone(locations.get(1), "pc21");
+            doWait(100);
+
+            args = new Object[]{"clone2"};
+            // Initiate second auctions containers participants
+            a = container[2].createNewAgent("participant2",CuratorAgent.class.getName(),args);
+            a.start();
+            doWait(100);
+            a.clone(locations.get(2), "pc12");
+            doWait(100);
+            a.clone(locations.get(2), "pc22");
 
         } catch (Exception e) {
             e.printStackTrace();
