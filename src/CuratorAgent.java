@@ -159,7 +159,9 @@ public class CuratorAgent extends Agent{
                         break;
                     case ACLMessage.INFORM:
                         done = true;
-                        String str = request.getContent();
+
+                        doDelete();
+                        //String str = request.getContent();
                         //System.out.println(getLocalName() + " auction ended, reason: " + str);
                         //System.out.println(getLocalName() + ": had the strategy: " + strategy + " and modifier: " + modifier);
                         break;

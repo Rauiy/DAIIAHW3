@@ -61,10 +61,10 @@ public class AgentController extends Agent {
             args[2] = locations.get(2);
             a = container[0].createNewAgent("Original", ArtistManager.class.getName(),args);
             a.start();
-            a.clone(locations.get(0),"clone1");
-            doWait(500);
-            a.clone(locations.get(0), "clone2");
-            doWait(500);
+            //a.clone(locations.get(0),"clone1");
+            //doWait(500);
+            //a.clone(locations.get(0), "clone2");
+            //doWait(500);
 
             args = new Object[]{"clone1"};
             // Initiate first auction containers participants

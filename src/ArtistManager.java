@@ -32,6 +32,7 @@ public class ArtistManager extends Agent {
     private Random r = new Random();
     private int rounds = 0;
     private Location[] locations;
+    private AID main;
     protected void setup(){
         curators = new ArrayList<AID>();
         item = new AuctionItem(r.nextInt(10000) +  10000, r.nextInt(3000)+1000, "MonaLisa" + r.nextInt(10000));
@@ -43,7 +44,26 @@ public class ArtistManager extends Agent {
                 locations[i] = (Location) args[i];
             }
         }
-        //addBehaviour(new WaitForCurators(this,mt,System.currentTimeMillis() + 5000, null, null));
+
+        main = getAID();
+        addBehaviour(new OneShotBehaviour() {
+            @Override
+            public void action() {
+                if(!getLocalName().contains("clone"))
+                doClone(here(), "clone1");
+            }
+        });
+        addBehaviour(new OneShotBehaviour() {
+            @Override
+            public void action() {
+                if(!getLocalName().contains("clone"))
+                doClone(here(), "clone2");
+            }
+        });
+
+
+        MessageTemplate mt = MessageTemplate.and(MessageTemplate.MatchPerformative(ACLMessage.INFORM),MessageTemplate.MatchOntology("AUCTION"));
+        addBehaviour(new WaitForResult(this, mt,Long.MAX_VALUE,null,null));
     }
 
     MessageTemplate mt = MessageTemplate.and(MessageTemplate.MatchPerformative(ACLMessage.INFORM),MessageTemplate.MatchConversationId("JOIN"));
@@ -62,7 +82,17 @@ public class ArtistManager extends Agent {
 
     protected void afterMove(){
         if(item.isSold() || item.getLimit()){
-            System.out.println(getLocalName() + ": got back, item status: " + item.toString());
+            //System.out.println(getLocalName() + ": got back, local best price was: " + item.getCurrentPrice());
+
+            ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
+            msg.setOntology("AUCTION");
+            msg.setConversationId("RESULT");
+            msg.addReceiver(main);
+
+            msg.setContent(item.getCurrentPrice() + "");
+
+            send(msg);
+            doDelete();
             return;
         }
         System.out.println(getLocalName() + ": I moved to " + here());
@@ -260,6 +290,42 @@ public class ArtistManager extends Agent {
         @Override
         public boolean done() {
             return done;
+        }
+    }
+    String result = null;
+    private class WaitForResult extends MsgReceiver{
+        boolean done = false;
+        public WaitForResult(Agent a, MessageTemplate mt, long deadline, DataStore s, Object msgKey) {
+            super(a, mt, deadline, s, msgKey);
+        }
+
+        @Override
+        public void handleMessage(ACLMessage msg){
+            if(result == null) {
+                result = msg.getContent();
+                System.out.println("Main: highbid was " + result + " kr");
+            }
+            else{
+                String res = msg.getContent();
+                System.out.println("Main: highbid was " + res + " kr");
+                if(Integer.parseInt(result) < Integer.parseInt(res)){
+                    result = res;
+                }
+                done = true;
+                System.out.println("Main: Overall highest bid was " + result + " kr");
+            }
+        }
+
+        @Override
+        public int onEnd(){
+            if(!done){
+                reset();
+                addBehaviour(this);
+            }else{
+                doWait(10000);
+                doDelete();
+            }
+            return super.onEnd();
         }
     }
 }
