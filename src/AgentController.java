@@ -75,6 +75,9 @@ public class AgentController extends Agent {
             doWait(500);
             a.clone(locations.get(1), "pc21");
             doWait(500);
+            a.clone(locations.get(1), "pc31");
+            doWait(500);
+
 
             args = new Object[]{"clone2"};
             // Initiate second auctions containers participants
@@ -84,6 +87,8 @@ public class AgentController extends Agent {
             a.clone(locations.get(2), "pc12");
             doWait(500);
             a.clone(locations.get(2), "pc22");
+            doWait(500);
+            a.clone(locations.get(2), "pc32");
 
         } catch (Exception e) {
             e.printStackTrace();

@@ -247,6 +247,12 @@ public class ArtistManager extends Agent {
                     sendMsg(myAgent, end);
                 default:
                     done = true;
+                    addBehaviour(new OneShotBehaviour() {
+                        @Override
+                        public void action() {
+                            doMove(locations[0]);
+                        }
+                    });
                     break;
             }
         }

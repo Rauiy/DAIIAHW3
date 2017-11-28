@@ -42,14 +42,14 @@ public class CuratorAgent extends Agent{
         Object[] args = getArguments();
         if(args != null && args.length > 0)
             aName = (String)args[0];
-        init();
+        //init();
     }
 
     private void init(){
         if(strategy == 0)
-            myBid += 500;
+            myBid += 250;
         if(strategy == 2)
-            myBid += 1000;
+            myBid += 500;
 
         sBid = myBid;
         sMod = modifier;
@@ -76,6 +76,11 @@ public class CuratorAgent extends Agent{
             modifier = r.nextInt(1000)+500;
             init();
         }
+        else if(getLocalName().contains("pc3")){
+            strategy = 0;
+            modifier = r.nextInt(500)+250;
+            init();
+        }
     }
 
     private void startAuctionActions(Agent myAgent){
@@ -95,7 +100,8 @@ public class CuratorAgent extends Agent{
             msg.setConversationId("JOIN");
             msg.addReceiver(artistManager);
             myAgent.send(msg);
-            startAuctionActions(myAgent);
+            //startAuctionActions(myAgent);
+            addBehaviour(new receiveInfo(myAgent, informTemplate, System.currentTimeMillis()+30000, null, null));
         }
     }
 
@@ -106,12 +112,14 @@ public class CuratorAgent extends Agent{
 
         @Override
         protected void handleMessage(ACLMessage msg) {
-            if(msg == null)
+            if(msg == null) {
                 System.out.println(getLocalName() + ": Never got ready msg");
+            }
             else {
-              //  System.out.println(myAgent.getLocalName() + " is ready for auction!");
+                System.out.println(myAgent.getLocalName() + " is ready for auction!");
                 myBid = sBid;
                 modifier = sMod;
+                addBehaviour(new receiveAuctions(myAgent, auctionTemplate));
             }
         }
     }
