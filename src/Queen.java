@@ -23,13 +23,13 @@ import java.util.Random;
  * Created by Steven on 2017-11-27.
  */
 public class Queen extends Agent {
-    boolean placed = false;
-    int n = 4;
-    int index;
-    int column;
+    private boolean placed = false;
+    private int n = 4;
+    private int index;
+    private int column;
     Random r = new Random();
-    int[] placements;
-    ArrayList<AID> queens;
+    private int[] placements;
+    private ArrayList<AID> queens;
 
 
     public void setup(){
@@ -64,7 +64,7 @@ public class Queen extends Agent {
             placements[i] = -1;
     }
 
-    public void findQueen() {
+    private void findQueen() {
         DFAgentDescription template = new DFAgentDescription();
         // to find the right service type imm
         ServiceDescription sd = new ServiceDescription();
@@ -83,7 +83,7 @@ public class Queen extends Agent {
         }
 
     }
-    public void registerAtDf(){
+    private void registerAtDf(){
         // Register the tour guide service in the yellow pages
         DFAgentDescription template = new DFAgentDescription();
         template.setName(getAID());
@@ -100,7 +100,7 @@ public class Queen extends Agent {
     }
 
     private class waitForParticipants extends MsgReceiver{
-        public waitForParticipants(Agent a, MessageTemplate mt, long deadline, DataStore s, Object msgKey) {
+        waitForParticipants(Agent a, MessageTemplate mt, long deadline, DataStore s, Object msgKey) {
             super(a, mt, deadline, s, msgKey);
         }
 
@@ -162,7 +162,7 @@ public class Queen extends Agent {
     }
 
     private class waitForStart extends MsgReceiver{
-        public waitForStart(Agent a, MessageTemplate mt, long deadline, DataStore s, Object msgKey) {
+        waitForStart(Agent a, MessageTemplate mt, long deadline, DataStore s, Object msgKey) {
             super(a, mt, deadline, s, msgKey);
         }
 
@@ -190,7 +190,7 @@ public class Queen extends Agent {
     ACLMessage predReply;
     MessageTemplate mt = MessageTemplate.MatchOntology("PLACEMENT");
     private class BoardPlacingBehaviour extends CyclicBehaviour{
-        public BoardPlacingBehaviour() {
+        BoardPlacingBehaviour() {
             System.out.println(index + ": CyclicBehaviour initialized");
             counter = 0;
         }
@@ -250,7 +250,7 @@ public class Queen extends Agent {
     }
 
     private class findMySpot extends OneShotBehaviour{
-        public findMySpot(boolean firstTime) {
+        findMySpot(boolean firstTime) {
             if(firstTime)
                 column = 0;
             else
@@ -313,7 +313,7 @@ public class Queen extends Agent {
                 if(placements[i] == j)
                     System.out.print("[" + i + "]");
                 else
-                    System.out.print("[-]");
+                    System.out.print("[ ]");
             }
             System.out.println();
         }
