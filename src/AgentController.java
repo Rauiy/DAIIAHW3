@@ -70,19 +70,19 @@ public class AgentController extends Agent {
             // Initiate first auction containers participants
             a = container[1].createNewAgent("participant1",CuratorAgent.class.getName(),args);
             a.start();
-            doWait(100);
+            doWait(500);
             a.clone(locations.get(1), "pc11");
-            doWait(100);
+            doWait(500);
             a.clone(locations.get(1), "pc21");
-            doWait(100);
+            doWait(500);
 
             args = new Object[]{"clone2"};
             // Initiate second auctions containers participants
             a = container[2].createNewAgent("participant2",CuratorAgent.class.getName(),args);
             a.start();
-            doWait(100);
+            doWait(500);
             a.clone(locations.get(2), "pc12");
-            doWait(100);
+            doWait(500);
             a.clone(locations.get(2), "pc22");
 
         } catch (Exception e) {
