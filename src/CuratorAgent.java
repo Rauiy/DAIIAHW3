@@ -150,10 +150,10 @@ public class CuratorAgent extends Agent{
                         }
                         break;
                     case ACLMessage.ACCEPT_PROPOSAL:
-                        System.out.println(myAgent.getLocalName() + " has won the " + item.getName());
+                        //System.out.println(myAgent.getLocalName() + " has won the " + item.getName());
                         break;
                     case ACLMessage.REJECT_PROPOSAL:
-                        System.out.println(myAgent.getLocalName() + " has lost the " + item.getName());
+                        //System.out.println(myAgent.getLocalName() + " has lost the " + item.getName());
                         // Use strategy change bid
                         increaseBid();
                         break;
