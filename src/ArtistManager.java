@@ -49,15 +49,15 @@ public class ArtistManager extends Agent {
         addBehaviour(new OneShotBehaviour() {
             @Override
             public void action() {
-                if(!getLocalName().contains("clone"))
-                doClone(here(), "clone1");
+                if(!getLocalName().contains("Clone"))
+                doClone(here(), getLocalName() + "Clone1");
             }
         });
         addBehaviour(new OneShotBehaviour() {
             @Override
             public void action() {
-                if(!getLocalName().contains("clone"))
-                doClone(here(), "clone2");
+                if(!getLocalName().contains("Clone"))
+                doClone(here(), getLocalName() + "Clone2");
             }
         });
 
@@ -70,14 +70,14 @@ public class ArtistManager extends Agent {
 
     protected void afterClone(){
         System.out.println("I am " + getLocalName());
-        if(!getLocalName().equals("Original")){
-           if(getLocalName().equals("clone1")){
-               doMove(locations[1]);
-           }
-           else if(getLocalName().equals("clone2")){
-               doMove(locations[2]);
-           }
+
+        if(getLocalName().contains("Clone1")){
+           doMove(locations[1]);
         }
+        else if(getLocalName().contains("Clone2")){
+           doMove(locations[2]);
+        }
+
     }
 
     protected void afterMove(){

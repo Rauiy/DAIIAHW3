@@ -30,6 +30,7 @@ public class CuratorAgent extends Agent{
     private double sMod = modifier;
     private Random r = new Random();
     private String aName;
+    private boolean init = false;
     // Template for receiving auction begin
     final MessageTemplate informTemplate = MessageTemplate.and(MessageTemplate.MatchConversationId("START"),
             MessageTemplate.and(MessageTemplate.MatchPerformative(ACLMessage.INFORM),
@@ -42,10 +43,28 @@ public class CuratorAgent extends Agent{
         Object[] args = getArguments();
         if(args != null && args.length > 0)
             aName = (String)args[0];
-        //init();
+
+        addBehaviour(new OneShotBehaviour() {
+            @Override
+            public void action() {
+                if(!getLocalName().contains("Clone"))
+                    doClone(here(), getLocalName()+"Clone1");
+            }
+        });
+        addBehaviour(new OneShotBehaviour() {
+            @Override
+            public void action() {
+                if(!getLocalName().contains("Clone"))
+                    doClone(here(), getLocalName()+"Clone2");
+            }
+        });
+
+
+        init();
     }
 
     private void init(){
+
         if(strategy == 0)
             myBid += 250;
         if(strategy == 2)
@@ -60,27 +79,28 @@ public class CuratorAgent extends Agent{
             artistManager = findAgent(this, "AUCTION");
         }
 
-        addBehaviour(new joinAuction());
+        if(!init)
+            addBehaviour(new joinAuction());
+
+        init = true;
     }
 
     protected void afterClone(){
         System.out.println("I am " + getLocalName());
         //participant clone
-        if(getLocalName().contains("pc1")){
+        if(getLocalName().contains("Clone1")){
             strategy = 1;
             modifier = 1.1;
-            init();
         }
-        else if(getLocalName().contains("pc2")){
+        else if(getLocalName().contains("Clone2")){
             strategy = 2;
             modifier = r.nextInt(1000)+500;
-            init();
         }
-        else if(getLocalName().contains("pc3")){
+        else{
             strategy = 0;
             modifier = r.nextInt(500)+250;
-            init();
         }
+        init();
     }
 
     private void startAuctionActions(Agent myAgent){
@@ -224,7 +244,7 @@ public class CuratorAgent extends Agent{
             // Should only exist one agent of each, so take the first one
             if(result.length > 0){
                for(DFAgentDescription dfad: result){
-                    if(aName == null || dfad.getName().getLocalName().equals(aName)){
+                    if(aName == null || dfad.getName().getLocalName().contains(aName)){
                         tmp = dfad.getName();
                         //System.out.println(getLocalName()+ ": Found auctioneer " + tmp.getLocalName());
                         break;

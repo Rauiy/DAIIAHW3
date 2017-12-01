@@ -59,36 +59,20 @@ public class AgentController extends Agent {
             args[0] = locations.get(0);
             args[1] = locations.get(1);
             args[2] = locations.get(2);
-            a = container[0].createNewAgent("Original", ArtistManager.class.getName(),args);
+            a = container[0].createNewAgent("Auctioneer", ArtistManager.class.getName(),args);
             a.start();
-            //a.clone(locations.get(0),"clone1");
-            //doWait(500);
-            //a.clone(locations.get(0), "clone2");
-            //doWait(500);
+            doWait(500);
 
-            args = new Object[]{"clone1"};
+            args = new Object[]{"Clone1"};
             // Initiate first auction containers participants
-            a = container[1].createNewAgent("participant1",CuratorAgent.class.getName(),args);
+            a = container[1].createNewAgent("Participant1",CuratorAgent.class.getName(),args);
             a.start();
             doWait(500);
-            a.clone(locations.get(1), "pc11");
-            doWait(500);
-            a.clone(locations.get(1), "pc21");
-            doWait(500);
-            a.clone(locations.get(1), "pc31");
-            doWait(500);
 
-
-            args = new Object[]{"clone2"};
+            args = new Object[]{"Clone2"};
             // Initiate second auctions containers participants
-            a = container[2].createNewAgent("participant2",CuratorAgent.class.getName(),args);
+            a = container[2].createNewAgent("Participant2",CuratorAgent.class.getName(),args);
             a.start();
-            doWait(500);
-            a.clone(locations.get(2), "pc12");
-            doWait(500);
-            a.clone(locations.get(2), "pc22");
-            doWait(500);
-            a.clone(locations.get(2), "pc32");
 
         } catch (Exception e) {
             e.printStackTrace();
