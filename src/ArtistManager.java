@@ -273,7 +273,7 @@ public class ArtistManager extends Agent {
                     }
 
                     end.setContent(str);
-                    //System.out.println(str + " in " + rounds + " rounds");
+                    System.out.println(str + " in " + rounds + " rounds");
                     sendMsg(myAgent, end);
                 default:
                     done = true;

@@ -65,13 +65,21 @@ public class CuratorAgent extends Agent{
 
     private void init(){
 
-        if(strategy == 0)
+        if(strategy == 0) {
             myBid += 250;
-        if(strategy == 2)
+            modifier = r.nextInt(500)+250;
+        }
+        else if(strategy == 1){
+            modifier = 1.1;
+        }
+        else if(strategy == 2) {
             myBid += 500;
+            modifier = r.nextInt(1000)+500;
+        }
 
         sBid = myBid;
         sMod = modifier;
+
 
         System.out.println(getLocalName() + ": Starting with strategy: " + strategy + " and modifier: " + modifier);
 
@@ -90,15 +98,12 @@ public class CuratorAgent extends Agent{
         //participant clone
         if(getLocalName().contains("Clone1")){
             strategy = 1;
-            modifier = 1.1;
         }
         else if(getLocalName().contains("Clone2")){
             strategy = 2;
-            modifier = r.nextInt(1000)+500;
         }
         else{
             strategy = 0;
-            modifier = r.nextInt(500)+250;
         }
         init();
     }
