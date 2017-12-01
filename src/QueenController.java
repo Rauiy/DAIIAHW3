@@ -15,7 +15,7 @@ import java.util.Vector;
 /**
  * Created by Steven on 2017-11-28.
  */
-public class TestContainer extends GuiAgent {
+public class QueenController extends GuiAgent {
     private jade.wrapper.AgentContainer home;
     private jade.wrapper.AgentContainer[] container = null;
     private Map locations = new HashMap();
@@ -36,7 +36,12 @@ public class TestContainer extends GuiAgent {
 
     @Override
     protected void setup(){
-        int n = 8;
+        int n = 9;
+
+        Object[] arguments = getArguments();
+        if(arguments.length > 0)
+            n = Integer.parseInt((String)arguments[0]);
+
         try {
             // Create the container objects
             home = runtime.createAgentContainer(new ProfileImpl());
